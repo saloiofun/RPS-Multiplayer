@@ -11,15 +11,17 @@ $(document).ready(function () {
   };
   firebase.initializeApp(config);
 
+
   // Player's constructor
-  function Player(name, wins, losses) {
+  function Player(name) {
     this.name = name;
-    this.wins = wins;
-    this.losses = losses;
+    this.wins = 0;
+    this.losses = 0;
   }
 
   // Initialize variables
   var database = firebase.database();
+  var playerName;
   var playerData;
   
   // Write player's information to Database
@@ -65,12 +67,10 @@ $(document).ready(function () {
   $("#name-submit").on("click", function (event) {
     event.preventDefault();
 
-    var playerName = $("#player-name").val().trim();
+    playerName = $("#player-name").val().trim();
 
     if (playerName) {
-
-      var player = new Player(playerName, 0, 0);
-
+      var player = new Player(playerName);
       database.ref().once("value", function(snapshot) {
         var hasPlayerOne = snapshot.child("/player 1").exists();
         var hasPlayerTwo = snapshot.child("/player 2").exists();
@@ -79,33 +79,40 @@ $(document).ready(function () {
           $("#name-header").html("<h1>Hi " + playerName + "! You are player 1</h1>");
           playerData = "/player 1";
           writeUserData(player);
-
-          var playerRef = database.ref(playerData);
-          playerRef.on("value", function(snapshot) {
-            player.wins = snapshot.val().wins;
-            player.losses = snapshot.val().losses;
-            playerStats(player, "#player-one-stats");
-          })
-
           removeUserOnDisconnect();
-
         } 
+
         if (hasPlayerOne && !hasPlayerTwo) {
           $("#name-header").html("<h1>Hi " + playerName + "! You are player 2</h1>");
           playerData = "/player 2";
           writeUserData(player);
-
-          var playerRef = database.ref(playerData);
-          playerRef.on("value", function(snapshot) {
-            player.wins = snapshot.val().wins;
-            player.losses = snapshot.val().losses;
-            playerStats(player, "#player-two-stats");
-          })
-
           removeUserOnDisconnect();
         }
-
+        
       });
+    }
+  });
+
+  database.ref().on("value", function(snapshot) {
+    var hasPlayerOne = snapshot.child("/player 1").exists();
+    var hasPlayerTwo = snapshot.child("/player 2").exists();
+
+    if (hasPlayerOne) {
+      var player = new Player(snapshot.child("/player 1/name").val());
+      player.wins = snapshot.child("/player 1/wins").val();
+      player.losses = snapshot.child("/player 1/losses").val();
+      playerStats(player, "#player-one-stats");
+    } else {
+      $("#player-one-stats").html("<p>Wait for player 1</p>");
+    }    
+
+    if (hasPlayerTwo) {
+      var player = new Player(snapshot.child("/player 2/name").val());
+      player.wins = snapshot.child("/player 2/wins").val();
+      player.losses = snapshot.child("/player 2/losses").val();
+      playerStats(player, "#player-two-stats");
+    } else {
+      $("#player-two-stats").html("<p>Wait for player 2</p>");
     }
 
   });
@@ -113,13 +120,13 @@ $(document).ready(function () {
   $(".rps").on("click", function() {
     var choice = $(this).attr("data-choice");
     if (choice === "rock") { 
-      writeUserChoice(playerData, "Rock") 
+      writeUserChoice(playerData, "Rock");
     };
     if (choice === "paper") { 
-      writeUserChoice(playerData, "Paper") 
+      writeUserChoice(playerData, "Paper");
     };
     if (choice === "scissors") { 
-      writeUserChoice(playerData, "Scissors") 
+      writeUserChoice(playerData, "Scissors");
     };
   });
 

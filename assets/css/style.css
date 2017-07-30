@@ -1,0 +1,116 @@
+body{
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+    background: #2980b9 url('../images/bg.png') repeat 0 0;
+    -webkit-animation: 10s linear 0s normal none infinite animate;
+    -moz-animation: 10s linear 0s normal none infinite animate;
+    -ms-animation: 10s linear 0s normal none infinite animate;
+    -o-animation: 10s linear 0s normal none infinite animate;
+    animation: 10s linear 0s normal none infinite animate;
+
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+}
+
+@-webkit-keyframes animate {
+    from {background-position:0 0;}
+    to {background-position: 0 -500px;}
+}
+
+@-moz-keyframes animate {
+    from {background-position:0 0;}
+    to {background-position: 0 -500px;}
+}
+
+@-ms-keyframes animate {
+    from {background-position:0 0;}
+    to {background-position: 0 -500px;}
+}
+
+@-o-keyframes animate {
+    from {background-position:0 0;}
+    to {background-position: 0 -500px;}
+}
+
+@keyframes animate {
+    from {background-position:0 0;}
+    to {background-position: 0 -500px;}
+}
+
+#game-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.form-control {
+    border: 1px solid white;
+}
+
+#name-header {
+    margin: 5px 0 0 0;
+}
+
+.jumbotron {
+    background-color: transparent;
+}
+
+#choices {
+    margin-bottom: 10px;
+}
+
+#choices img {
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+.buttons {
+    margin-top: .5em;
+    cursor: pointer;
+}
+
+#game-stage {
+    position: relative;
+    height: 100%;
+}
+
+.stats-container {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+
+.player-one-box {
+    -webkit-transform: skew(-10deg);
+    -moz-transform: skew(-10deg);
+    -o-transform: skew(-10deg);
+}
+
+.player-two-box {
+    -webkit-transform: skew(10deg);
+    -moz-transform: skew(10deg);
+    -o-transform: skew(10deg);
+}
+
+.stats-box {
+    width: 100px;
+    height: 150px;
+    background: rgba(0,0,0,.8);
+    border: 2px solid white;
+    margin: 20px;
+    text-align: center;
+    color: white;
+    font-size: 1.3em;
+    line-height: 1;
+    font-family: 'Montserrat', sans-serif;
+    text-transform: uppercase;
+    padding: 0;
+}
+
+.stats-box h4 {
+    background-color: white;
+    color: black;
+}

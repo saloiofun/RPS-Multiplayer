@@ -11,16 +11,66 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
 
 </head>
 <body>
-	<div class="container">
+	<div id="game-stage" class="container-fluid">
+		<div class="container text-center">
+			<div id="game-title" class="row">
+				<div class="col"><h1 class="display-5">ROCK PAPER SCISSORS</h1></div>
+			</div>
+			<div class="row justify-content-md-center">
+				<div id="name-header" class="col">
+					<form>
+						<div class="form-group">
+							<div class="input-group">
+								<input id="player-name" type="name" class="form-control" placeholder="Enter your name">
+								<span class="input-group-btn">
+									<button id="name-submit" class="btn btn-info" type="submit">START!</button>
+								</span>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
 		<div class="row">
-			<div class="col"><button id="rock" type=button class="btn btn-primary">Rock</button></div>
-			<div class="col"><button id="paper" type=button class="btn btn-primary">Paper</button></div>
-			<div class="col"><button id="scissors" type=button class="btn btn-primary">Scissors</button></div>
+			<div id ="player-one" class="col-md-2 text-center"></div>
+			<div class="col"></div>
+			<div id="player-two" class="col-md-2 text-center"></div>
+		</div>
+
+		<div class="row align-items-end justify-content-between stats-container">
+			<div class="col-3 player-one-box stats-box">				
+				<section>
+					<h4>Player 1</h4>
+					<div id="player-one-stats"></div>
+				</section>
+			</div>
+			<div class="col">
+				<div id="choices" class="row text-center">
+					<div class="col-4">
+						<img src="assets/images/rock.png" class="rps img-fluid" alt="rock" data-choice="rock"><h3>Rock</h3>
+					</div>			
+					<div class="col-4">
+						<img src="assets/images/paper.png" class="rps img-fluid" alt="paper" data-choice="paper"><h3>Paper</h3>					
+					</div>			
+					<div class="col-4">
+						<img src="assets/images/scissors.png" class="rps img-fluid" alt="scissros" data-choice="scissors"><h3>Scissors</h3>	
+					</div>	
+				</div>
+			</div>
+			<div class="col-3 player-two-box stats-box">				
+				<section>
+					<h4>Player 2</h4>
+					<div id="player-two-stats"></div>
+				</section>
+			</div>
 		</div>
 	</div>
+</div>
 
 </body>
 </html>

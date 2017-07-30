@@ -25,7 +25,7 @@ $(document).ready(function () {
   var playerData;
   
   // Write player's information to Database
-  var writeUserData = function(player) {
+  var writePlayerData = function(player) {
   	database.ref(playerData).set({
   		name: player.name,
   		wins: player.wins,
@@ -34,10 +34,15 @@ $(document).ready(function () {
   }
 
   // Write to player's choice to Database 
-  var writeUserChoice = function(player, choice) {
+  var writePlayerChoice = function(player, choice) {
   	database.ref(player).update({
   		choice: choice
   	});
+  }
+
+  var removePlayersChoice = function(pChoice) {
+    database.ref("/player 1/choice").remove();
+    database.ref("/player 2/choice").remove();
   }
 
   // Remove player from Database 
@@ -78,14 +83,13 @@ $(document).ready(function () {
         if ((!hasPlayerOne && !hasPlayerTwo) || (!hasPlayerOne && hasPlayerTwo))  {
           $("#name-header").html("<h1>Hi " + playerName + "! You are player 1</h1>");
           playerData = "/player 1";
-          writeUserData(player);
+          writePlayerData(player);
           removeUserOnDisconnect();
-        } 
 
-        if (hasPlayerOne && !hasPlayerTwo) {
+        } else {
           $("#name-header").html("<h1>Hi " + playerName + "! You are player 2</h1>");
           playerData = "/player 2";
-          writeUserData(player);
+          writePlayerData(player);
           removeUserOnDisconnect();
         }
         
@@ -98,35 +102,86 @@ $(document).ready(function () {
     var hasPlayerTwo = snapshot.child("/player 2").exists();
 
     if (hasPlayerOne) {
-      var player = new Player(snapshot.child("/player 1/name").val());
-      player.wins = snapshot.child("/player 1/wins").val();
-      player.losses = snapshot.child("/player 1/losses").val();
-      playerStats(player, "#player-one-stats");
+      var p1 = new Player(snapshot.child("/player 1/name").val());
+      p1.wins = snapshot.child("/player 1/wins").val();
+      p1.losses = snapshot.child("/player 1/losses").val();
+      playerStats(p1, "#player-one-stats");
     } else {
       $("#player-one-stats").html("<p>Wait for player 1</p>");
     }    
 
     if (hasPlayerTwo) {
-      var player = new Player(snapshot.child("/player 2/name").val());
-      player.wins = snapshot.child("/player 2/wins").val();
-      player.losses = snapshot.child("/player 2/losses").val();
-      playerStats(player, "#player-two-stats");
+      var p2 = new Player(snapshot.child("/player 2/name").val());
+      p2.wins = snapshot.child("/player 2/wins").val();
+      p2.losses = snapshot.child("/player 2/losses").val();
+      playerStats(p2, "#player-two-stats");
     } else {
       $("#player-two-stats").html("<p>Wait for player 2</p>");
     }
 
   });
 
+  var compareChoices = function(snapshot) {
+    var hasP1Choice = snapshot.hasChild("/player 1/choice");
+    var hasP2Choice = snapshot.hasChild("/player 2/choice");
+    var p1Choice;
+    var p2Choice;
+
+    if (hasP1Choice) {
+      p1Choice = snapshot.child("/player 1/choice").val();
+      console.log("Player 1: " + p1Choice);
+    } 
+
+    if (hasP2Choice) {
+      p2Choice = snapshot.child("/player 2/choice").val();
+      console.log("Player 2: " + p2Choice);
+    }
+
+    if (p1Choice && p2Choice) {
+      if ((p1Choice === "Rock" && p2Choice === "Scissors") || (p1Choice === "Scissors" && p2Choice === "Paper") || (p1Choice === "Paper" && p2Choice === "Rock")) {
+        var p1Wins = snapshot.child("/player 1/wins").val();
+        p1Wins++;
+        database.ref().child("/player 1/").update({
+          wins :  p1Wins
+        });
+
+        var p2Losses = snapshot.child("/player 2/losses").val();
+        p2Losses++;
+        database.ref().child("/player 2/").update({
+          losses :  p2Losses
+        });
+
+      } else if ((p1Choice === "Rock" && p2Choice === "Paper") || (p1Choice === "Scissors" && p2Choice === "Rock") || (p1Choice === "Paper" && p2Choice === "Scissors")) {
+        var p2Wins = snapshot.child("/player 2/wins").val();
+        p2Wins++;
+        database.ref().child("/player 2/").update({
+          wins :  p2Wins
+        });
+        
+        var p1Losses = snapshot.child("/player 1/losses").val();
+        p1Losses++;
+        database.ref().child("/player 1/").update({
+          losses :  p1Losses
+        });
+      } else if (p1Choice === p2Choice) {
+        console.log("Tie");
+      } 
+    }
+  }  
+
   $(".rps").on("click", function() {
     var choice = $(this).attr("data-choice");
     if (choice === "rock") { 
-      writeUserChoice(playerData, "Rock");
+      writePlayerChoice(playerData, "Rock");
+      database.ref().once("value", compareChoices);
     };
     if (choice === "paper") { 
-      writeUserChoice(playerData, "Paper");
+      writePlayerChoice(playerData, "Paper");
+      database.ref().once("value", compareChoices);
     };
     if (choice === "scissors") { 
-      writeUserChoice(playerData, "Scissors");
+      writePlayerChoice(playerData, "Scissors");
+      database.ref().once("value", compareChoices);
     };
   });
 

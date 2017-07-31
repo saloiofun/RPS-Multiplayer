@@ -58,13 +58,32 @@ html, body {
     background-color: transparent;
 }
 
-#choices {
+
+#chat {
     margin-bottom: 10px;
 }
 
-#choices img {
+#chat-window {
+    height: 150px;
+    width: 100%;
+    border: 1px black solid;
+    padding: 5px;
+    background: white;
+    color: #333;
+    border-radius: 5px
+}
+
+.choices img {
     cursor: pointer;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+#player-one img:hover {
+    margin-left: 15px;
+}
+
+#player-two img:hover {
+    margin-right: 15px;
 }
 
 .buttons {
@@ -72,9 +91,49 @@ html, body {
     cursor: pointer;
 }
 
-#game-stage {
+#game-container {
     position: relative;
     height: 100%;
+}
+
+#player-one img {
+    border-radius: 50%;
+    float: left;
+    animation-duration: 0.2s;
+    animation-name: leftSlidein;
+}
+
+@keyframes leftSlidein {
+    from {
+        margin-left: -100%;
+    }
+
+    to {
+        margin-left: 0%;
+    }
+}
+
+#player-two img {
+    border-radius: 50%;
+    float: right;
+    animation-duration: 0.2s;
+    animation-name: rightSlidein;
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
+}
+
+@keyframes rightSlidein {
+    from {
+        margin-right: -100%;
+    }
+
+    to {
+        margin-left: 0%;
+    }
 }
 
 .stats-container {

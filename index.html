@@ -15,31 +15,65 @@
 
 </head>
 <body>
-	<div id="game-stage" class="container-fluid">
+	<div id="game-container" class="container-fluid">
 		<div class="container text-center">
 			<div id="game-title" class="row">
 				<div class="col"><h1 class="display-5">ROCK PAPER SCISSORS</h1></div>
 			</div>
-			<div class="row justify-content-md-center">
-				<div id="name-header" class="col">
-					<form>
-						<div class="form-group">
-							<div class="input-group">
-								<input id="player-name" type="name" class="form-control" placeholder="Enter your name">
-								<span class="input-group-btn">
-									<button id="name-submit" class="btn btn-info" type="submit">START!</button>
-								</span>
-							</div>
+		</div>
+
+		<div class="row justify-content-center text-center">
+			<div id="name-header" class="col-5">
+				<form>
+					<div class="form-group">
+						<div class="input-group">
+							<input id="player-name" type="name" class="form-control" placeholder="Enter your name">
+							<span class="input-group-btn">
+								<button id="name-submit" class="btn btn-info" type="submit">START!</button>
+							</span>
 						</div>
-					</form>
-				</div>
+					</div>
+				</form>
 			</div>
 		</div>
 
-		<div class="row">
-			<div id ="player-one" class="col-md-2 text-center"></div>
-			<div class="col"></div>
-			<div id="player-two" class="col-md-2 text-center"></div>
+		<div class="row text-center align-items-center">
+			<div id="player-one" class="col choices">
+				<div class="row text-center no-gutters justify-content-center">
+					<div class="col-4">
+						<img src="assets/images/rock.png" class="rps img-fluid" alt="rock" data-choice="rock">						
+					</div>
+				</div>
+				<div class="row text-center no-gutters justify-content-center">
+					<div class="col-4">
+						<img src="assets/images/paper.png" class="rps img-fluid" alt="paper" data-choice="paper">
+					</div>
+				</div>
+				<div class="row text-center no-gutters justify-content-center">
+					<div class="col-4">
+						<img src="assets/images/scissors.png" class="rps img-fluid" alt="scissros" data-choice="scissors">	
+					</div>
+				</div>
+			</div>
+			<div id="game-stage" class="col-5">				
+			</div>
+			<div id="player-two" class="col choices">
+				<div class="row text-center no-gutters justify-content-center">
+					<div class="col-4">
+						<img src="assets/images/rock.png" class="rps img-fluid" alt="rock" data-choice="rock">						
+					</div>
+				</div>
+				<div class="row text-center no-gutters justify-content-center">
+					<div class="col-4">
+						<img src="assets/images/paper.png" class="rps img-fluid" alt="paper" data-choice="paper">
+					</div>
+				</div>
+				<div class="row text-center no-gutters justify-content-center">
+					<div class="col-4">
+						<img src="assets/images/scissors.png" class="rps img-fluid" alt="scissros" data-choice="scissors">	
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<div class="row align-items-end justify-content-between stats-container">
@@ -49,18 +83,18 @@
 					<div id="player-one-stats"></div>
 				</section>
 			</div>
-			<div class="col">
-				<div id="choices" class="row text-center">
-					<div class="col-4">
-						<img src="assets/images/rock.png" class="rps img-fluid" alt="rock" data-choice="rock"><h3>Rock</h3>
-					</div>			
-					<div class="col-4">
-						<img src="assets/images/paper.png" class="rps img-fluid" alt="paper" data-choice="paper"><h3>Paper</h3>					
-					</div>			
-					<div class="col-4">
-						<img src="assets/images/scissors.png" class="rps img-fluid" alt="scissros" data-choice="scissors"><h3>Scissors</h3>	
-					</div>	
-				</div>
+			<div id="chat" class="col">
+				<div id="chat-window"></div>
+				<form>
+					<div class="form-group">
+						<div class="input-group">
+							<input id="message-input" type="input" class="form-control" placeholder="Message">
+							<span class="input-group-btn">
+								<button id="message-submit" class="btn btn-info" type="submit">Send</button>
+							</span>
+						</div>
+					</div>
+				</form>
 			</div>
 			<div class="col-3 player-two-box stats-box">				
 				<section>
@@ -70,7 +104,6 @@
 			</div>
 		</div>
 	</div>
-</div>
 
 </body>
 </html>

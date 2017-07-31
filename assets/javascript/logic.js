@@ -40,7 +40,7 @@ $(document).ready(function () {
   	});
   }
 
-  var removePlayersChoice = function(pChoice) {
+  var removePlayersChoice = function() {
     database.ref("/player 1/choice").remove();
     database.ref("/player 2/choice").remove();
   }
@@ -55,6 +55,17 @@ $(document).ready(function () {
         con.onDisconnect().remove();
       }
     });
+  }
+
+  //function to create player's avatar and slide animation
+  var playerAvatarSlide = function(player, playerName) {
+
+    var playerImage = $("<img>");
+    playerImage.addClass("img-fluid");
+    playerImage.attr("src", "https://robohash.org/set_set3/" + playerName + "?size=400x400");
+    playerImage.attr("alt", playerName + " avatar");
+
+    $("#" + player).append(playerImage);
   }
 
   // Function to update the players stats (wins, losses)
@@ -83,12 +94,14 @@ $(document).ready(function () {
         if ((!hasPlayerOne && !hasPlayerTwo) || (!hasPlayerOne && hasPlayerTwo))  {
           $("#name-header").html("<h1>Hi " + playerName + "! You are player 1</h1>");
           playerData = "/player 1";
+          //playerAvatarSlide("player-one", playerName);
           writePlayerData(player);
           removeUserOnDisconnect();
 
         } else {
           $("#name-header").html("<h1>Hi " + playerName + "! You are player 2</h1>");
           playerData = "/player 2";
+          //playerAvatarSlide("player-two", playerName);
           writePlayerData(player);
           removeUserOnDisconnect();
         }
@@ -157,7 +170,7 @@ $(document).ready(function () {
         database.ref().child("/player 2/").update({
           wins :  p2Wins
         });
-        
+
         var p1Losses = snapshot.child("/player 1/losses").val();
         p1Losses++;
         database.ref().child("/player 1/").update({
@@ -166,6 +179,8 @@ $(document).ready(function () {
       } else if (p1Choice === p2Choice) {
         console.log("Tie");
       } 
+
+      setTimeout(removePlayersChoice, 3000);
     }
   }  
 

@@ -124,7 +124,9 @@ $(document).ready(function () {
           removeUserOnDisconnect();
         }
         
-      });
+      }, function (error) {
+       console.log("Error: " + error.code);
+     });
     }
   });
 
@@ -150,7 +152,9 @@ $(document).ready(function () {
       $("#player-two-stats").html("<p>Wait for player 2</p>");
     }
 
-  });
+  }, function (error) {
+   console.log("Error: " + error.code);
+ });
 
   var compareChoices = function(snapshot) {
     var hasP1Choice = snapshot.hasChild("/player 1/choice");
@@ -202,20 +206,24 @@ $(document).ready(function () {
     }
   }  
 
-  $(".rps").on("click", function() {
+  $(".choices").delegate("img", "click", function() {
     var choice = $(this).attr("data-choice");
     if (choice === "rock") { 
       writePlayerChoice(playerData, "Rock");
       database.ref().once("value", compareChoices);
-    };
+    }
     if (choice === "paper") { 
       writePlayerChoice(playerData, "Paper");
       database.ref().once("value", compareChoices);
-    };
+    }
     if (choice === "scissors") { 
       writePlayerChoice(playerData, "Scissors");
       database.ref().once("value", compareChoices);
-    };
+    }
+  });
+
+  $("#message-submit").on("click", function() {
+    console.log("Test");
   });
 
 });

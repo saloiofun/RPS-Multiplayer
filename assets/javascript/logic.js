@@ -57,6 +57,23 @@ $(document).ready(function () {
     });
   }
 
+  var createChoices = function(element) {
+    var choices = ['rock', 'paper', 'scissors'];
+
+    for (var i = 0; i < choices.length; i++) {
+      var choiceRow = $("<div class=\"row text-center no-gutters justify-content-center\">");
+      var choiceCol = $("<div class=\"col-4\">");
+      var choiceImg = $("<img class=\"rps img-fluid\">");
+      choiceImg.attr("src", "assets/images/" + choices[i] + ".png");
+      choiceImg.attr("alt", choices[i]);
+      choiceImg.attr("data-choice", choices[i]);
+
+      choiceRow.append(choiceCol);
+      choiceCol.append(choiceImg);
+      $(element).append(choiceRow);
+    }    
+  }
+
   //function to create player's avatar and slide animation
   var playerAvatarSlide = function(player, playerName) {
 
@@ -94,14 +111,15 @@ $(document).ready(function () {
         if ((!hasPlayerOne && !hasPlayerTwo) || (!hasPlayerOne && hasPlayerTwo))  {
           $("#name-header").html("<h1>Hi " + playerName + "! You are player 1</h1>");
           playerData = "/player 1";
-          //playerAvatarSlide("player-one", playerName);
+          createChoices("#player-one");
           writePlayerData(player);
           removeUserOnDisconnect();
 
         } else {
           $("#name-header").html("<h1>Hi " + playerName + "! You are player 2</h1>");
           playerData = "/player 2";
-          //playerAvatarSlide("player-two", playerName);
+          
+          createChoices("#player-two");
           writePlayerData(player);
           removeUserOnDisconnect();
         }

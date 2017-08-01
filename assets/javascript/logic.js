@@ -21,28 +21,17 @@ $(document).ready(function () {
 
   // Initialize variables
   var database = firebase.database();
-  var playerName;
-  var playerData;
+  var pData;
+  var player;
+  var chat = [];
   
   // Write player's information to Database
   var writePlayerData = function(player) {
-  	database.ref(playerData).set({
+  	database.ref(pData).set({
   		name: player.name,
   		wins: player.wins,
   		losses: player.losses
   	});
-  }
-
-  // Write to player's choice to Database 
-  var writePlayerChoice = function(player, choice) {
-  	database.ref(player).update({
-  		choice: choice
-  	});
-  }
-
-  var removePlayersChoice = function() {
-    database.ref("/player 1/choice").remove();
-    database.ref("/player 2/choice").remove();
   }
 
   // Remove player from Database 
@@ -51,7 +40,7 @@ $(document).ready(function () {
     connectedRef.on("value", function(snap) {
       // Checks if player is in Database
       if (snap.val()) {
-        var con = database.ref().child(playerData);
+        var con = database.ref().child(pData);
         con.onDisconnect().remove();
       }
     });
@@ -74,13 +63,25 @@ $(document).ready(function () {
     }    
   }
 
+  // Write to player's choice to Database 
+  var writePlayerChoice = function(player, choice) {
+    database.ref(player).update({
+      choice: choice
+    });
+  }
+
+  var removePlayersChoice = function() {
+    database.ref("/player 1/choice").remove();
+    database.ref("/player 2/choice").remove();
+  }
+
   //function to create player's avatar and slide animation
-  var playerAvatarSlide = function(player, playerName) {
+  var playerAvatarSlide = function(player, pName) {
 
     var playerImage = $("<img>");
     playerImage.addClass("img-fluid");
-    playerImage.attr("src", "https://robohash.org/set_set3/" + playerName + "?size=400x400");
-    playerImage.attr("alt", playerName + " avatar");
+    playerImage.attr("src", "https://robohash.org/set_set3/" + pName + "?size=400x400");
+    playerImage.attr("alt", pName + " avatar");
 
     $("#" + player).append(playerImage);
   }
@@ -97,28 +98,36 @@ $(document).ready(function () {
     $(element).append(losses);
   };
 
+  var populateChat = function() {
+    var chatRef = database.ref("/chat");
+    chatRef.on("child_changed", function(snapshot) {
+      console.log(snapshot.val());
+      $("#chat-window").append("text");
+    });
+  }
+
   $("#name-submit").on("click", function (event) {
     event.preventDefault();
 
-    playerName = $("#player-name").val().trim();
+    var pName = $("#player-name").val().trim();
 
-    if (playerName) {
-      var player = new Player(playerName);
+    if (pName) {
       database.ref().once("value", function(snapshot) {
         var hasPlayerOne = snapshot.child("/player 1").exists();
         var hasPlayerTwo = snapshot.child("/player 2").exists();
 
         if ((!hasPlayerOne && !hasPlayerTwo) || (!hasPlayerOne && hasPlayerTwo))  {
-          $("#name-header").html("<h1>Hi " + playerName + "! You are player 1</h1>");
-          playerData = "/player 1";
+          player = new Player(pName);
+          $("#name-header").html("<h1>Hi " + pName + "! You are player 1</h1>");
+          pData = "/player 1";
           createChoices("#player-one");
           writePlayerData(player);
           removeUserOnDisconnect();
 
         } else {
-          $("#name-header").html("<h1>Hi " + playerName + "! You are player 2</h1>");
-          playerData = "/player 2";
-          
+          player = new Player(pName);
+          $("#name-header").html("<h1>Hi " + pName + "! You are player 2</h1>");
+          pData = "/player 2";          
           createChoices("#player-two");
           writePlayerData(player);
           removeUserOnDisconnect();
@@ -209,21 +218,38 @@ $(document).ready(function () {
   $(".choices").delegate("img", "click", function() {
     var choice = $(this).attr("data-choice");
     if (choice === "rock") { 
-      writePlayerChoice(playerData, "Rock");
+      writePlayerChoice(pData, "Rock");
       database.ref().once("value", compareChoices);
     }
     if (choice === "paper") { 
-      writePlayerChoice(playerData, "Paper");
+      writePlayerChoice(pData, "Paper");
       database.ref().once("value", compareChoices);
     }
     if (choice === "scissors") { 
-      writePlayerChoice(playerData, "Scissors");
+      writePlayerChoice(pData, "Scissors");
       database.ref().once("value", compareChoices);
     }
   });
 
-  $("#message-submit").on("click", function() {
-    console.log("Test");
+  $("#message-submit").on("click", function(event) {
+    event.preventDefault();
+    var message = $("#message-input").val().trim();
+    var name;
+    player ? name = player.name : name = "Visitor";
+    var chatRef = database.ref("/chat");
+    chatRef.set({
+      [name] : message
+    });
+
+    $("#message-input").val("");
   });
+
+  var chatRef = database.ref("/chat");
+  chatRef.on("child_added", function(snapshot) {
+    console.log(snapshot.key);
+    $("#chat-window").append(snapshot.key + ": " + snapshot.val() + "<br>");
+    chatRef.remove();
+  });
+
 
 });

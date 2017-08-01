@@ -136,6 +136,11 @@ html, body {
     }
 }
 
+#chat-window {
+    overflow-y: auto;
+    word-wrap: break-word;
+}
+
 .stats-container {
     position: absolute;
     width: 100%;

@@ -21,6 +21,8 @@ $(document).ready(function () {
 
   // Initialize variables
   var database = firebase.database();
+  var p1 = false;
+  var p2 = false;
   var pData;
   var player;
 
@@ -65,9 +67,10 @@ $(document).ready(function () {
 
   var createChoices = function(element) {
     var choices = ['rock', 'paper', 'scissors'];
+    $(element).empty();
 
     for (var i = 0; i < choices.length; i++) {
-      var choiceRow = $("<div class=\"row text-center no-gutters justify-content-center\">");
+      var choiceRow = $("<div class=\"row no-gutters justify-content-center\">");
       var choiceCol = $("<div class=\"col-4\">");
       var choiceImg = $("<img class=\"rps img-fluid\">");
       choiceImg.attr("src", "assets/images/" + choices[i] + ".png");
@@ -135,6 +138,7 @@ $(document).ready(function () {
 
         if ((!hasPlayerOne && !hasPlayerTwo) || (!hasPlayerOne && hasPlayerTwo))  {
           player = new Player(pName);
+          p1 = true;
           $("#name-header").html("<h1>Hi " + pName + "! You are player 1</h1>");
           pData = "/players/player 1";
           createChoices("#player-one");
@@ -143,6 +147,7 @@ $(document).ready(function () {
 
         } else {
           player = new Player(pName);
+          p2 = true;
           $("#name-header").html("<h1>Hi " + pName + "! You are player 2</h1>");
           pData = "/players/player 2";          
           createChoices("#player-two");
@@ -159,6 +164,8 @@ $(document).ready(function () {
   database.ref("/players").on("value", function(snapshot) {
     var hasPlayerOne = snapshot.child("/player 1").exists();
     var hasPlayerTwo = snapshot.child("/player 2").exists();
+    var hasP1Choice = snapshot.hasChild("/player 1/choice");
+    var hasP2Choice = snapshot.hasChild("/player 2/choice");
 
     if (hasPlayerOne) {
       var p1 = new Player(snapshot.child("/player 1/name").val());
@@ -188,50 +195,58 @@ $(document).ready(function () {
       }
     }
 
+    if(!hasP1Choice && !hasP2Choice) {
+      if (player && p1) {
+        createChoices("#player-one");
+      } else if (player && p2) {
+        createChoices("#player-two");
+      }
+    }
+
   }, function (error) {
    console.log("Error: " + error.code);
  });
 
   var compareChoices = function(snapshot) {
-    var hasP1Choice = snapshot.hasChild("/players/player 1/choice");
-    var hasP2Choice = snapshot.hasChild("/players/player 2/choice");
+    var hasP1Choice = snapshot.hasChild("/player 1/choice");
+    var hasP2Choice = snapshot.hasChild("/player 2/choice");
     var p1Choice;
     var p2Choice;
 
     if (hasP1Choice) {
-      p1Choice = snapshot.child("/players/player 1/choice").val();
+      p1Choice = snapshot.child("/player 1/choice").val();
       console.log("Player 1: " + p1Choice);
     } 
 
     if (hasP2Choice) {
-      p2Choice = snapshot.child("/players/player 2/choice").val();
+      p2Choice = snapshot.child("/player 2/choice").val();
       console.log("Player 2: " + p2Choice);
     }
 
     if (p1Choice && p2Choice) {
       if ((p1Choice === "Rock" && p2Choice === "Scissors") || (p1Choice === "Scissors" && p2Choice === "Paper") || (p1Choice === "Paper" && p2Choice === "Rock")) {
-        var p1Wins = snapshot.child("/players/player 1/wins").val();
+        var p1Wins = snapshot.child("/player 1/wins").val();
         p1Wins++;
-        database.ref().child("/players/player 1/").update({
+        database.ref("/players").child("/player 1/").update({
           wins :  p1Wins
         });
 
-        var p2Losses = snapshot.child("/players/player 2/losses").val();
+        var p2Losses = snapshot.child("/player 2/losses").val();
         p2Losses++;
-        database.ref().child("/players/player 2/").update({
+        database.ref("/players").child("/player 2/").update({
           losses :  p2Losses
         });
 
       } else if ((p1Choice === "Rock" && p2Choice === "Paper") || (p1Choice === "Scissors" && p2Choice === "Rock") || (p1Choice === "Paper" && p2Choice === "Scissors")) {
-        var p2Wins = snapshot.child("/players/player 2/wins").val();
+        var p2Wins = snapshot.child("/player 2/wins").val();
         p2Wins++;
-        database.ref().child("/players/player 2/").update({
+        database.ref("/players").child("/player 2/").update({
           wins :  p2Wins
         });
 
-        var p1Losses = snapshot.child("/players/player 1/losses").val();
+        var p1Losses = snapshot.child("/player 1/losses").val();
         p1Losses++;
-        database.ref().child("/players/player 1/").update({
+        database.ref("/players").child("/player 1/").update({
           losses :  p1Losses
         });
       } else if (p1Choice === p2Choice) {
@@ -246,15 +261,36 @@ $(document).ready(function () {
     var choice = $(this).attr("data-choice");
     if (choice === "rock") { 
       writePlayerChoice(pData, "Rock");
-      database.ref().once("value", compareChoices);
+      if (p1) {
+        $("#player-one").empty();
+        $(this).clone().addClass("big-choice").appendTo("#player-one");
+      } else {
+        $("#player-two").empty();
+        $(this).clone().addClass("big-choice").appendTo("#player-two");
+      }
+      database.ref("/players").once("value", compareChoices);
     }
     if (choice === "paper") { 
       writePlayerChoice(pData, "Paper");
-      database.ref().once("value", compareChoices);
+      if (p1) {
+        $("player-one").empty();
+        $(this).clone().addClass("big-choice").appendTo("#player-one");
+      } else {
+        $("#player-two").empty();
+        $(this).clone().addClass("big-choice").appendTo("#player-two");
+      }
+      database.ref("/players").once("value", compareChoices);
     }
     if (choice === "scissors") { 
       writePlayerChoice(pData, "Scissors");
-      database.ref().once("value", compareChoices);
+      if (p1) {
+        $("#player-one").empty();
+        $(this).clone().addClass("big-choice").appendTo("#player-one");
+      } else {
+        $("#player-two").empty();
+        $(this).clone().addClass("big-choice").appendTo("#player-two");
+      }
+      database.ref("/players").once("value", compareChoices);
     }
   });
 

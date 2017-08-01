@@ -23,7 +23,24 @@ $(document).ready(function () {
   var database = firebase.database();
   var pData;
   var player;
-  var chat = [];
+
+  var createNameForm = function() {
+    $("#name-header").empty();
+
+    var form = $("<form autocomplete='off'>");
+    var formGroup = $("<div class='form-group'><div class='input-group'>");
+    var inputGroup = $("<div class='input-group'>");
+    var input = $("<input id='player-name' type='name' class='form-control' placeholder='Enter your name'>");
+    var span = $("<span class='input-group-btn'>");
+    var button = $("<button id='name-submit' class='btn btn-info' type='submit'>START!</button>");
+
+    span.append(button);
+    inputGroup.append(input).append(span);
+    formGroup.append(inputGroup);
+    form.append(formGroup);
+
+    $("#name-header").append(form);
+  }
   
   // Write player's information to Database
   var writePlayerData = function(player) {
@@ -71,8 +88,8 @@ $(document).ready(function () {
   }
 
   var removePlayersChoice = function() {
-    database.ref("/player 1/choice").remove();
-    database.ref("/player 2/choice").remove();
+    database.ref("/players/player 1/choice").remove();
+    database.ref("/players/player 2/choice").remove();
   }
 
   //function to create player's avatar and slide animation
@@ -106,20 +123,20 @@ $(document).ready(function () {
     });
   }
 
-  $("#name-submit").on("click", function (event) {
+  $("#name-header").delegate("#name-submit", "click", function (event) {
     event.preventDefault();
 
     var pName = $("#player-name").val().trim();
 
     if (pName) {
-      database.ref().once("value", function(snapshot) {
+      database.ref("/players").once("value", function(snapshot) {
         var hasPlayerOne = snapshot.child("/player 1").exists();
         var hasPlayerTwo = snapshot.child("/player 2").exists();
 
         if ((!hasPlayerOne && !hasPlayerTwo) || (!hasPlayerOne && hasPlayerTwo))  {
           player = new Player(pName);
           $("#name-header").html("<h1>Hi " + pName + "! You are player 1</h1>");
-          pData = "/player 1";
+          pData = "/players/player 1";
           createChoices("#player-one");
           writePlayerData(player);
           removeUserOnDisconnect();
@@ -127,19 +144,19 @@ $(document).ready(function () {
         } else {
           player = new Player(pName);
           $("#name-header").html("<h1>Hi " + pName + "! You are player 2</h1>");
-          pData = "/player 2";          
+          pData = "/players/player 2";          
           createChoices("#player-two");
           writePlayerData(player);
           removeUserOnDisconnect();
         }
-        
+
       }, function (error) {
        console.log("Error: " + error.code);
      });
     }
   });
 
-  database.ref().on("value", function(snapshot) {
+  database.ref("/players").on("value", function(snapshot) {
     var hasPlayerOne = snapshot.child("/player 1").exists();
     var hasPlayerTwo = snapshot.child("/player 2").exists();
 
@@ -161,50 +178,60 @@ $(document).ready(function () {
       $("#player-two-stats").html("<p>Wait for player 2</p>");
     }
 
+    if (hasPlayerOne && hasPlayerTwo) {
+      if(!player) {
+        $("#name-header").html("Please wait for an available spot.");
+      }
+    } else if (!hasPlayerOne || !hasPlayerTwo) {
+      if(!player) {
+        createNameForm(); 
+      }
+    }
+
   }, function (error) {
    console.log("Error: " + error.code);
  });
 
   var compareChoices = function(snapshot) {
-    var hasP1Choice = snapshot.hasChild("/player 1/choice");
-    var hasP2Choice = snapshot.hasChild("/player 2/choice");
+    var hasP1Choice = snapshot.hasChild("/players/player 1/choice");
+    var hasP2Choice = snapshot.hasChild("/players/player 2/choice");
     var p1Choice;
     var p2Choice;
 
     if (hasP1Choice) {
-      p1Choice = snapshot.child("/player 1/choice").val();
+      p1Choice = snapshot.child("/players/player 1/choice").val();
       console.log("Player 1: " + p1Choice);
     } 
 
     if (hasP2Choice) {
-      p2Choice = snapshot.child("/player 2/choice").val();
+      p2Choice = snapshot.child("/players/player 2/choice").val();
       console.log("Player 2: " + p2Choice);
     }
 
     if (p1Choice && p2Choice) {
       if ((p1Choice === "Rock" && p2Choice === "Scissors") || (p1Choice === "Scissors" && p2Choice === "Paper") || (p1Choice === "Paper" && p2Choice === "Rock")) {
-        var p1Wins = snapshot.child("/player 1/wins").val();
+        var p1Wins = snapshot.child("/players/player 1/wins").val();
         p1Wins++;
-        database.ref().child("/player 1/").update({
+        database.ref().child("/players/player 1/").update({
           wins :  p1Wins
         });
 
-        var p2Losses = snapshot.child("/player 2/losses").val();
+        var p2Losses = snapshot.child("/players/player 2/losses").val();
         p2Losses++;
-        database.ref().child("/player 2/").update({
+        database.ref().child("/players/player 2/").update({
           losses :  p2Losses
         });
 
       } else if ((p1Choice === "Rock" && p2Choice === "Paper") || (p1Choice === "Scissors" && p2Choice === "Rock") || (p1Choice === "Paper" && p2Choice === "Scissors")) {
-        var p2Wins = snapshot.child("/player 2/wins").val();
+        var p2Wins = snapshot.child("/players/player 2/wins").val();
         p2Wins++;
-        database.ref().child("/player 2/").update({
+        database.ref().child("/players/player 2/").update({
           wins :  p2Wins
         });
 
-        var p1Losses = snapshot.child("/player 1/losses").val();
+        var p1Losses = snapshot.child("/players/player 1/losses").val();
         p1Losses++;
-        database.ref().child("/player 1/").update({
+        database.ref().child("/players/player 1/").update({
           losses :  p1Losses
         });
       } else if (p1Choice === p2Choice) {

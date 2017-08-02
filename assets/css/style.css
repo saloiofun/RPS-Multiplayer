@@ -103,8 +103,7 @@ html, body {
     height: 100%;
 }
 
-#player-one img {
-    border-radius: 50%;
+/*#player-one img {
     float: left;
     animation-duration: 0.2s;
     animation-name: leftSlidein;
@@ -121,7 +120,6 @@ html, body {
 }
 
 #player-two img {
-    border-radius: 50%;
     float: right;
     animation-duration: 0.2s;
     animation-name: rightSlidein;
@@ -141,56 +139,65 @@ html, body {
     to {
         margin-left: 0%;
     }
-}
+    }*/
 
-#p2-choice img {
-    -moz-transform: scaleX(-1);
-    -o-transform: scaleX(-1);
-    -webkit-transform: scaleX(-1);
-    transform: scaleX(-1);
-    filter: FlipH;
-    -ms-filter: "FlipH";
-}
+    #player-two img {
+        -moz-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        filter: FlipH;
+        -ms-filter: "FlipH";
+    }
 
-#chat-window {
-    overflow-y: auto;
-    word-wrap: break-word;
-}
+    #p2-choice img {
+        -moz-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        filter: FlipH;
+        -ms-filter: "FlipH";
+    }
 
-.stats-container {
-    position: absolute;
-    width: 100%;
-    bottom: 0;
-}
+    #chat-window {
+        overflow-y: auto;
+        word-wrap: break-word;
+    }
 
-.player-one-box {
-    -webkit-transform: skew(-10deg);
-    -moz-transform: skew(-10deg);
-    -o-transform: skew(-10deg);
-}
+    .stats-container {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+    }
 
-.player-two-box {
-    -webkit-transform: skew(10deg);
-    -moz-transform: skew(10deg);
-    -o-transform: skew(10deg);
-}
+    .player-one-box {
+        -webkit-transform: skew(-10deg);
+        -moz-transform: skew(-10deg);
+        -o-transform: skew(-10deg);
+    }
 
-.stats-box {
-    width: 100px;
-    height: 150px;
-    background: rgba(0,0,0,.8);
-    border: 2px solid white;
-    margin: 20px;
-    text-align: center;
-    color: white;
-    font-size: 1.3em;
-    line-height: 1;
-    font-family: 'Montserrat', sans-serif;
-    text-transform: uppercase;
-    padding: 0;
-}
+    .player-two-box {
+        -webkit-transform: skew(10deg);
+        -moz-transform: skew(10deg);
+        -o-transform: skew(10deg);
+    }
 
-.stats-box h4 {
-    background-color: white;
-    color: black;
-}
+    .stats-box {
+        width: 100px;
+        height: 150px;
+        background: rgba(0,0,0,.8);
+        border: 2px solid white;
+        margin: 20px;
+        text-align: center;
+        color: white;
+        font-size: 1.3em;
+        line-height: 1;
+        font-family: 'Montserrat', sans-serif;
+        text-transform: uppercase;
+        padding: 0;
+    }
+
+    .stats-box h4 {
+        background-color: white;
+        color: black;
+    }

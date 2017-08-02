@@ -25,6 +25,7 @@ $(document).ready(function () {
   var p2 = false;
   var pData;
   var player;
+  var turn;
 
   var createNameForm = function() {
     $("#name-header").empty();
@@ -195,13 +196,13 @@ $(document).ready(function () {
       }
     }
 
-    if(!hasP1Choice && !hasP2Choice) {
-      if (player && p1) {
-        createChoices("#player-one");
-      } else if (player && p2) {
-        createChoices("#player-two");
-      }
-    }
+    // if(!hasP1Choice && !hasP2Choice) {
+    //   if (player && p1) {
+    //     createChoices("#player-one");
+    //   } else if (player && p2) {
+    //     createChoices("#player-two");
+    //   }
+    // }
 
   }, function (error) {
    console.log("Error: " + error.code);
@@ -257,27 +258,32 @@ $(document).ready(function () {
     }
   }  
 
+  // var checkGameRef = database.ref();
+  // checkGameRef.child("/turn").on("value", function(snapshot) {
+  //   console.log(snapshot.val());
+  // });
+
   $(".choices").delegate("img", "click", function() {
     var choice = $(this).attr("data-choice");
     if (choice === "rock") { 
       writePlayerChoice(pData, "Rock");
       if (p1) {
         $("#player-one").empty();
-        $(this).clone().addClass("big-choice").appendTo("#player-one");
+        $(this).clone().addClass("big-choice float-right").appendTo("#player-one");
       } else {
         $("#player-two").empty();
-        $(this).clone().addClass("big-choice").appendTo("#player-two");
+        $(this).clone().addClass("big-choice float-left").appendTo("#player-two");
       }
       database.ref("/players").once("value", compareChoices);
     }
     if (choice === "paper") { 
       writePlayerChoice(pData, "Paper");
       if (p1) {
-        $("player-one").empty();
-        $(this).clone().addClass("big-choice").appendTo("#player-one");
+        $("#player-one").empty();
+        $(this).clone().addClass("big-choice float-right").appendTo("#player-one");
       } else {
         $("#player-two").empty();
-        $(this).clone().addClass("big-choice").appendTo("#player-two");
+        $(this).clone().addClass("big-choice float-left").appendTo("#player-two");
       }
       database.ref("/players").once("value", compareChoices);
     }
@@ -285,10 +291,10 @@ $(document).ready(function () {
       writePlayerChoice(pData, "Scissors");
       if (p1) {
         $("#player-one").empty();
-        $(this).clone().addClass("big-choice").appendTo("#player-one");
+        $(this).clone().addClass("big-choice float-right").appendTo("#player-one");
       } else {
         $("#player-two").empty();
-        $(this).clone().addClass("big-choice").appendTo("#player-two");
+        $(this).clone().addClass("big-choice float-left").appendTo("#player-two");
       }
       database.ref("/players").once("value", compareChoices);
     }

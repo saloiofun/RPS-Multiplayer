@@ -50,7 +50,7 @@ html, body {
 }
 
 #name-header {
-    margin: 5px 0 0 0;
+    margin: 25px 0 0 0;
 }
 
 .jumbotron {
@@ -140,6 +140,14 @@ html, body {
         margin-left: 0%;
     }
     }*/
+
+    .rps-intro {
+        -webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        -o-transform: rotate(-90deg);
+        -ms-transform: rotate(-90deg);
+        transform: rotate(-90deg);
+    }
 
     #player-two img {
         -moz-transform: scaleX(-1);

@@ -83,6 +83,24 @@ $(document).ready(function () {
     }    
   }
 
+  var createHeader = function(element) {
+    var choices = ['rock', 'paper', 'scissors'];
+    $(element).empty();
+
+    var choiceRow = $("<div class=\"row justify-content-center\">");
+    $(element).append(choiceRow);
+
+    for (var i = 0; i < choices.length; i++) {
+      var choiceCol = $("<div class=\"col-4\">");
+      var choiceImg = $("<img class=\"img-fluid rps-intro\">");
+      choiceImg.attr("src", "assets/images/" + choices[i] + ".png");
+      choiceImg.attr("alt", choices[i]);
+
+      choiceCol.append(choiceImg);
+      choiceRow.append(choiceCol);
+    }    
+  }
+
   // Write to player's choice to Database 
   var writePlayerChoice = function(player, choice) {
     database.ref(player).update({
@@ -93,6 +111,7 @@ $(document).ready(function () {
   var removePlayersChoice = function() {
     database.ref("/players/player 1/choice").remove();
     database.ref("/players/player 2/choice").remove();
+    database.ref("/players/winner").remove();
   }
 
   //function to create player's avatar and slide animation
@@ -164,6 +183,7 @@ $(document).ready(function () {
     var hasPlayerTwo = snapshot.child("/player 2").exists();
     var hasP1Choice = snapshot.hasChild("/player 1/choice");
     var hasP2Choice = snapshot.hasChild("/player 2/choice");
+    var hasWinner = snapshot.hasChild("/winner");
     var p1Choice;
     var p2Choice;
 
@@ -198,7 +218,18 @@ $(document).ready(function () {
         $("#name-header").html("<h2>Please wait for an available spot.</h2>");
       }
     } else if (!hasPlayerOne || !hasPlayerTwo) {
+      $("#welcome-player").empty();
+      createHeader("#game-stage");      
+      $("#player-one").empty();
+      $("#player-two").empty();
+      if (p1) {
+        $("#name-header").html("<h1>Hi " + player1.name + "! You are player 1</h1>");
+      }
+      if (p2) {
+        $("#name-header").html("<h1>Hi " + player2.name + "! You are player 2</h1>");
+      }
       if(!player) {
+        createHeader("#game-stage");
         createNameForm(); 
       }
     }
@@ -210,11 +241,24 @@ $(document).ready(function () {
       $("#player-two").empty();
       $("#player-one").append(p1Image);
       $("#player-two").append(p2Image);
+
+      if (hasWinner) {
+        $("#game-stage").html("<h1>" + snapshot.child("/winner").val() + " Wins!</h1>"); 
+      } else {
+        $("#game-stage").html("<h1>Tie Game!</h1>"); 
+      }
     }
 
     if (hasPlayerOne && hasPlayerTwo) {
+      $("#name-header").empty();
+      if (p1) {
+        $("#welcome-player").html("<h1>Hi " + player1.name + "! You are player 1</h1>");    
+      }
+      if (p2) {
+        $("#welcome-player").html("<h1>Hi " + player2.name + "! You are player 2</h1>");
+      }
       if (!hasP1Choice && !hasP2Choice) {
-        $("#game-result").empty();
+        $("#game-stage").empty();
         $("#player-one").empty();
         $("#player-two").empty();
         if (p1) {
@@ -258,7 +302,9 @@ $(document).ready(function () {
           losses :  p2Losses
         });
 
-        $("#game-result").html("<h1>" + snapshot.child("/player 1/name").val() + " Wins!</h1>");
+        database.ref("/players").update({
+          winner : snapshot.child("/player 1/name").val()
+        })
 
       } else if ((p1Choice === "rock" && p2Choice === "paper") || (p1Choice === "scissors" && p2Choice === "rock") || (p1Choice === "paper" && p2Choice === "scissors")) {
         var p2Wins = snapshot.child("/player 2/wins").val();
@@ -273,13 +319,13 @@ $(document).ready(function () {
           losses :  p1Losses
         });
 
-        $("#game-result").html("<h1>" + snapshot.child("/player 2/name").val() + " Wins!</h1>");
+        database.ref("/players").update({
+          winner : snapshot.child("/player 2/name").val()
+        })
 
-      } else if (p1Choice === p2Choice) {
-        console.log("Tie");
-      } 
+      }
 
-      setTimeout(removePlayersChoice, 3000);
+      setTimeout(removePlayersChoice, 3500);
 
     }
   }  

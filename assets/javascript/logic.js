@@ -25,7 +25,6 @@ $(document).ready(function () {
   var p2 = false;
   var pData;
   var player;
-  var turn;
 
   var createNameForm = function() {
     $("#name-header").empty();
@@ -142,7 +141,6 @@ $(document).ready(function () {
           p1 = true;
           $("#name-header").html("<h1>Hi " + pName + "! You are player 1</h1>");
           pData = "/players/player 1";
-          createChoices("#player-one");
           writePlayerData(player);
           removeUserOnDisconnect();
 
@@ -151,7 +149,6 @@ $(document).ready(function () {
           p2 = true;
           $("#name-header").html("<h1>Hi " + pName + "! You are player 2</h1>");
           pData = "/players/player 2";          
-          createChoices("#player-two");
           writePlayerData(player);
           removeUserOnDisconnect();
         }
@@ -167,28 +164,38 @@ $(document).ready(function () {
     var hasPlayerTwo = snapshot.child("/player 2").exists();
     var hasP1Choice = snapshot.hasChild("/player 1/choice");
     var hasP2Choice = snapshot.hasChild("/player 2/choice");
+    var p1Choice;
+    var p2Choice;
+
+    if (hasP1Choice) {
+      p1Choice = snapshot.child("/player 1/choice").val();
+    } 
+
+    if (hasP2Choice) {
+      p2Choice = snapshot.child("/player 2/choice").val();
+    }
 
     if (hasPlayerOne) {
-      var p1 = new Player(snapshot.child("/player 1/name").val());
-      p1.wins = snapshot.child("/player 1/wins").val();
-      p1.losses = snapshot.child("/player 1/losses").val();
-      playerStats(p1, "#player-one-stats");
+      var player1 = new Player(snapshot.child("/player 1/name").val());
+      player1.wins = snapshot.child("/player 1/wins").val();
+      player1.losses = snapshot.child("/player 1/losses").val();
+      playerStats(player1, "#player-one-stats");
     } else {
       $("#player-one-stats").html("<p>Wait for player 1</p>");
     }    
 
     if (hasPlayerTwo) {
-      var p2 = new Player(snapshot.child("/player 2/name").val());
-      p2.wins = snapshot.child("/player 2/wins").val();
-      p2.losses = snapshot.child("/player 2/losses").val();
-      playerStats(p2, "#player-two-stats");
+      var player2 = new Player(snapshot.child("/player 2/name").val());
+      player2.wins = snapshot.child("/player 2/wins").val();
+      player2.losses = snapshot.child("/player 2/losses").val();
+      playerStats(player2, "#player-two-stats");
     } else {
       $("#player-two-stats").html("<p>Wait for player 2</p>");
     }
 
     if (hasPlayerOne && hasPlayerTwo) {
       if(!player) {
-        $("#name-header").html("Please wait for an available spot.");
+        $("#name-header").html("<h2>Please wait for an available spot.</h2>");
       }
     } else if (!hasPlayerOne || !hasPlayerTwo) {
       if(!player) {
@@ -196,13 +203,27 @@ $(document).ready(function () {
       }
     }
 
-    // if(!hasP1Choice && !hasP2Choice) {
-    //   if (player && p1) {
-    //     createChoices("#player-one");
-    //   } else if (player && p2) {
-    //     createChoices("#player-two");
-    //   }
-    // }
+    if (hasP1Choice && hasP2Choice){
+      var p1Image = $("<img class='big-choice float-right img-fluid' src='assets/images/" + p1Choice + ".png' alt='" + p1Choice + "'>");
+      var p2Image = $("<img class='big-choice float-left img-fluid' src='assets/images/" + p2Choice + ".png' alt='" + p2Choice + "'>");
+      $("#player-one").empty();
+      $("#player-two").empty();
+      $("#player-one").append(p1Image);
+      $("#player-two").append(p2Image);
+    }
+
+    if (hasPlayerOne && hasPlayerTwo) {
+      if (!hasP1Choice && !hasP2Choice) {
+        if (p1) {    
+          $("#player-two").empty();
+          createChoices("#player-one");    
+        }
+        if (p2) {
+          $("#player-one").empty();
+          createChoices("#player-two");
+        }
+      }
+    }
 
   }, function (error) {
    console.log("Error: " + error.code);
@@ -216,16 +237,14 @@ $(document).ready(function () {
 
     if (hasP1Choice) {
       p1Choice = snapshot.child("/player 1/choice").val();
-      console.log("Player 1: " + p1Choice);
     } 
 
     if (hasP2Choice) {
       p2Choice = snapshot.child("/player 2/choice").val();
-      console.log("Player 2: " + p2Choice);
     }
 
     if (p1Choice && p2Choice) {
-      if ((p1Choice === "Rock" && p2Choice === "Scissors") || (p1Choice === "Scissors" && p2Choice === "Paper") || (p1Choice === "Paper" && p2Choice === "Rock")) {
+      if ((p1Choice === "rock" && p2Choice === "scissors") || (p1Choice === "scissors" && p2Choice === "paper") || (p1Choice === "paper" && p2Choice === "rock")) {
         var p1Wins = snapshot.child("/player 1/wins").val();
         p1Wins++;
         database.ref("/players").child("/player 1/").update({
@@ -238,7 +257,9 @@ $(document).ready(function () {
           losses :  p2Losses
         });
 
-      } else if ((p1Choice === "Rock" && p2Choice === "Paper") || (p1Choice === "Scissors" && p2Choice === "Rock") || (p1Choice === "Paper" && p2Choice === "Scissors")) {
+        $("#game-result").html("<h1>" + snapshot.child("/player 1/name").val() + " Wins!</h1>");
+
+      } else if ((p1Choice === "rock" && p2Choice === "paper") || (p1Choice === "scissors" && p2Choice === "rock") || (p1Choice === "paper" && p2Choice === "scissors")) {
         var p2Wins = snapshot.child("/player 2/wins").val();
         p2Wins++;
         database.ref("/players").child("/player 2/").update({
@@ -250,23 +271,22 @@ $(document).ready(function () {
         database.ref("/players").child("/player 1/").update({
           losses :  p1Losses
         });
+
+        $("#game-result").html("<h1>" + snapshot.child("/player 2/name").val() + " Wins!</h1>");
+
       } else if (p1Choice === p2Choice) {
         console.log("Tie");
       } 
 
       setTimeout(removePlayersChoice, 3000);
+
     }
   }  
-
-  // var checkGameRef = database.ref();
-  // checkGameRef.child("/turn").on("value", function(snapshot) {
-  //   console.log(snapshot.val());
-  // });
 
   $(".choices").delegate("img", "click", function() {
     var choice = $(this).attr("data-choice");
     if (choice === "rock") { 
-      writePlayerChoice(pData, "Rock");
+      writePlayerChoice(pData, "rock");
       if (p1) {
         $("#player-one").empty();
         $(this).clone().addClass("big-choice float-right").appendTo("#player-one");
@@ -277,7 +297,7 @@ $(document).ready(function () {
       database.ref("/players").once("value", compareChoices);
     }
     if (choice === "paper") { 
-      writePlayerChoice(pData, "Paper");
+      writePlayerChoice(pData, "paper");
       if (p1) {
         $("#player-one").empty();
         $(this).clone().addClass("big-choice float-right").appendTo("#player-one");
@@ -288,7 +308,7 @@ $(document).ready(function () {
       database.ref("/players").once("value", compareChoices);
     }
     if (choice === "scissors") { 
-      writePlayerChoice(pData, "Scissors");
+      writePlayerChoice(pData, "scissors");
       if (p1) {
         $("#player-one").empty();
         $(this).clone().addClass("big-choice float-right").appendTo("#player-one");

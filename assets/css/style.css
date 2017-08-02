@@ -2,12 +2,11 @@ body{
     font-family: 'Montserrat', sans-serif;
     color: white;
     background: #2980b9 url('../images/bg.png') repeat 0 0;
-    -webkit-animation: 10s linear 0s normal none infinite animate;
+/*    -webkit-animation: 10s linear 0s normal none infinite animate;
     -moz-animation: 10s linear 0s normal none infinite animate;
     -ms-animation: 10s linear 0s normal none infinite animate;
     -o-animation: 10s linear 0s normal none infinite animate;
-    animation: 10s linear 0s normal none infinite animate;
-
+    animation: 10s linear 0s normal none infinite animate;*/
 }
 
 html, body {
@@ -51,7 +50,7 @@ html, body {
 }
 
 #name-header {
-    margin: 5px 0 0 0;
+    margin: 25px 0 0 0;
 }
 
 .jumbotron {
@@ -86,6 +85,14 @@ html, body {
     margin-right: 15px;
 }
 
+.big-choice {
+    cursor: default !important;
+}
+
+.big-choice:hover {
+    margin-left: 0px !important;
+}
+
 .buttons {
     margin-top: .5em;
     cursor: pointer;
@@ -96,8 +103,7 @@ html, body {
     height: 100%;
 }
 
-#player-one img {
-    border-radius: 50%;
+/*#player-one img {
     float: left;
     animation-duration: 0.2s;
     animation-name: leftSlidein;
@@ -114,7 +120,6 @@ html, body {
 }
 
 #player-two img {
-    border-radius: 50%;
     float: right;
     animation-duration: 0.2s;
     animation-name: rightSlidein;
@@ -134,47 +139,73 @@ html, body {
     to {
         margin-left: 0%;
     }
-}
+    }*/
 
-#chat-window {
-    overflow-y: auto;
-    word-wrap: break-word;
-}
+    .rps-intro {
+        -webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        -o-transform: rotate(-90deg);
+        -ms-transform: rotate(-90deg);
+        transform: rotate(-90deg);
+    }
 
-.stats-container {
-    position: absolute;
-    width: 100%;
-    bottom: 0;
-}
+    #player-two img {
+        -moz-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        filter: FlipH;
+        -ms-filter: "FlipH";
+    }
 
-.player-one-box {
-    -webkit-transform: skew(-10deg);
-    -moz-transform: skew(-10deg);
-    -o-transform: skew(-10deg);
-}
+    #p2-choice img {
+        -moz-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        filter: FlipH;
+        -ms-filter: "FlipH";
+    }
 
-.player-two-box {
-    -webkit-transform: skew(10deg);
-    -moz-transform: skew(10deg);
-    -o-transform: skew(10deg);
-}
+    #chat-window {
+        overflow-y: auto;
+        word-wrap: break-word;
+    }
 
-.stats-box {
-    width: 100px;
-    height: 150px;
-    background: rgba(0,0,0,.8);
-    border: 2px solid white;
-    margin: 20px;
-    text-align: center;
-    color: white;
-    font-size: 1.3em;
-    line-height: 1;
-    font-family: 'Montserrat', sans-serif;
-    text-transform: uppercase;
-    padding: 0;
-}
+    .stats-container {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+    }
 
-.stats-box h4 {
-    background-color: white;
-    color: black;
-}
+    .player-one-box {
+        -webkit-transform: skew(-10deg);
+        -moz-transform: skew(-10deg);
+        -o-transform: skew(-10deg);
+    }
+
+    .player-two-box {
+        -webkit-transform: skew(10deg);
+        -moz-transform: skew(10deg);
+        -o-transform: skew(10deg);
+    }
+
+    .stats-box {
+        width: 100px;
+        height: 150px;
+        background: rgba(0,0,0,.8);
+        border: 2px solid white;
+        margin: 20px;
+        text-align: center;
+        color: white;
+        font-size: 1.3em;
+        line-height: 1;
+        font-family: 'Montserrat', sans-serif;
+        text-transform: uppercase;
+        padding: 0;
+    }
+
+    .stats-box h4 {
+        background-color: white;
+        color: black;
+    }

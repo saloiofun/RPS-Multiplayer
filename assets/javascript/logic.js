@@ -215,7 +215,7 @@ $(document).ready(function () {
 
     if (hasPlayerOne && hasPlayerTwo) {
       if(!player) {
-        $("#name-header").html("<h2>Please wait for an available spot.</h2>");
+        $("#welcome-player").html("<h2>Game is On! Please wait for an available spot.</h2>");
       }
     } else if (!hasPlayerOne || !hasPlayerTwo) {
       $("#welcome-player").empty();

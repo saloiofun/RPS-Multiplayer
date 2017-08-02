@@ -214,12 +214,13 @@ $(document).ready(function () {
 
     if (hasPlayerOne && hasPlayerTwo) {
       if (!hasP1Choice && !hasP2Choice) {
-        if (p1) {    
-          $("#player-two").empty();
+        $("#game-result").empty();
+        $("#player-one").empty();
+        $("#player-two").empty();
+        if (p1) {
           createChoices("#player-one");    
         }
         if (p2) {
-          $("#player-one").empty();
           createChoices("#player-two");
         }
       }

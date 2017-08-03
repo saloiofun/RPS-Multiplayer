@@ -243,10 +243,12 @@ $(document).ready(function () {
       $("#player-two").append(p2Image);
 
       if (hasWinner) {
-        $("#game-stage").html("<h1>" + snapshot.child("/winner").val() + " Wins!</h1>"); 
+        $("#game-stage").html("<h1>" + snapshot.child("/winner").val() + " Wins!</h1>");
       } else {
         $("#game-stage").html("<h1>Tie Game!</h1>"); 
       }
+
+      setTimeout(removePlayersChoice, 3500);
     }
 
     if (hasPlayerOne && hasPlayerTwo) {
@@ -324,8 +326,6 @@ $(document).ready(function () {
         })
 
       }
-
-      setTimeout(removePlayersChoice, 3500);
 
     }
   }  

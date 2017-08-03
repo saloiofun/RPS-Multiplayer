@@ -82,7 +82,7 @@ html, body {
 }
 
 #player-two img:hover {
-    margin-right: 15px;
+    margin-left: -30px;
 }
 
 .big-choice {

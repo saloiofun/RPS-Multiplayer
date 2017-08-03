@@ -11,7 +11,6 @@ $(document).ready(function () {
   };
   firebase.initializeApp(config);
 
-
   // Player's constructor
   function Player(name) {
     this.name = name;
@@ -26,6 +25,26 @@ $(document).ready(function () {
   var pData;
   var player;
 
+  // create "logo"
+  var createHeader = function(element) {
+    var choices = ['rock', 'paper', 'scissors'];
+    $(element).empty();
+
+    var choiceRow = $("<div class=\"row justify-content-center\">");
+    $(element).append(choiceRow);
+
+    for (var i = 0; i < choices.length; i++) {
+      var choiceCol = $("<div class=\"col-4\">");
+      var choiceImg = $("<img class=\"img-fluid rps-intro\">");
+      choiceImg.attr("src", "assets/images/" + choices[i] + ".png");
+      choiceImg.attr("alt", choices[i]);
+
+      choiceCol.append(choiceImg);
+      choiceRow.append(choiceCol);
+    }    
+  }
+
+  // Create form for name input
   var createNameForm = function() {
     $("#name-header").empty();
 
@@ -42,6 +61,25 @@ $(document).ready(function () {
     form.append(formGroup);
 
     $("#name-header").append(form);
+  }
+
+  // create the choices images
+  var createChoices = function(element) {
+    var choices = ['rock', 'paper', 'scissors'];
+    $(element).empty();
+
+    for (var i = 0; i < choices.length; i++) {
+      var choiceRow = $("<div class=\"row no-gutters justify-content-center\">");
+      var choiceCol = $("<div class=\"col-4\">");
+      var choiceImg = $("<img class=\"rps img-fluid\">");
+      choiceImg.attr("src", "assets/images/" + choices[i] + ".png");
+      choiceImg.attr("alt", choices[i]);
+      choiceImg.attr("data-choice", choices[i]);
+
+      choiceRow.append(choiceCol);
+      choiceCol.append(choiceImg);
+      $(element).append(choiceRow);
+    }    
   }
   
   // Write player's information to Database
@@ -65,42 +103,6 @@ $(document).ready(function () {
     });
   }
 
-  var createChoices = function(element) {
-    var choices = ['rock', 'paper', 'scissors'];
-    $(element).empty();
-
-    for (var i = 0; i < choices.length; i++) {
-      var choiceRow = $("<div class=\"row no-gutters justify-content-center\">");
-      var choiceCol = $("<div class=\"col-4\">");
-      var choiceImg = $("<img class=\"rps img-fluid\">");
-      choiceImg.attr("src", "assets/images/" + choices[i] + ".png");
-      choiceImg.attr("alt", choices[i]);
-      choiceImg.attr("data-choice", choices[i]);
-
-      choiceRow.append(choiceCol);
-      choiceCol.append(choiceImg);
-      $(element).append(choiceRow);
-    }    
-  }
-
-  var createHeader = function(element) {
-    var choices = ['rock', 'paper', 'scissors'];
-    $(element).empty();
-
-    var choiceRow = $("<div class=\"row justify-content-center\">");
-    $(element).append(choiceRow);
-
-    for (var i = 0; i < choices.length; i++) {
-      var choiceCol = $("<div class=\"col-4\">");
-      var choiceImg = $("<img class=\"img-fluid rps-intro\">");
-      choiceImg.attr("src", "assets/images/" + choices[i] + ".png");
-      choiceImg.attr("alt", choices[i]);
-
-      choiceCol.append(choiceImg);
-      choiceRow.append(choiceCol);
-    }    
-  }
-
   // Write to player's choice to Database 
   var writePlayerChoice = function(player, choice) {
     database.ref(player).update({
@@ -108,21 +110,11 @@ $(document).ready(function () {
     });
   }
 
+  // Remove player's choice and winner node
   var removePlayersChoice = function() {
     database.ref("/players/player 1/choice").remove();
     database.ref("/players/player 2/choice").remove();
     database.ref("/players/winner").remove();
-  }
-
-  //function to create player's avatar and slide animation
-  var playerAvatarSlide = function(player, pName) {
-
-    var playerImage = $("<img>");
-    playerImage.addClass("img-fluid");
-    playerImage.attr("src", "https://robohash.org/set_set3/" + pName + "?size=400x400");
-    playerImage.attr("alt", pName + " avatar");
-
-    $("#" + player).append(playerImage);
   }
 
   // Function to update the players stats (wins, losses)
@@ -137,6 +129,7 @@ $(document).ready(function () {
     $(element).append(losses);
   };
 
+  // Append message from database into chat window
   var populateChat = function() {
     var chatRef = database.ref("/chat");
     chatRef.on("child_changed", function(snapshot) {
@@ -145,6 +138,7 @@ $(document).ready(function () {
     });
   }
 
+  // Trigger when user submit name
   $("#name-header").delegate("#name-submit", "click", function (event) {
     event.preventDefault();
 
@@ -178,6 +172,7 @@ $(document).ready(function () {
     }
   });
 
+  // Update's website when any data in players folder is modified 
   database.ref("/players").on("value", function(snapshot) {
     var hasPlayerOne = snapshot.child("/player 1").exists();
     var hasPlayerTwo = snapshot.child("/player 2").exists();
@@ -186,17 +181,21 @@ $(document).ready(function () {
     var hasWinner = snapshot.hasChild("/winner");
     var p1Choice;
     var p2Choice;
+    var player1;
+    var player2;
 
+    // get player 1 choice
     if (hasP1Choice) {
       p1Choice = snapshot.child("/player 1/choice").val();
     } 
 
+    // get player 2 choice
     if (hasP2Choice) {
       p2Choice = snapshot.child("/player 2/choice").val();
     }
 
     if (hasPlayerOne) {
-      var player1 = new Player(snapshot.child("/player 1/name").val());
+      player1 = new Player(snapshot.child("/player 1/name").val());
       player1.wins = snapshot.child("/player 1/wins").val();
       player1.losses = snapshot.child("/player 1/losses").val();
       playerStats(player1, "#player-one-stats");
@@ -205,7 +204,7 @@ $(document).ready(function () {
     }    
 
     if (hasPlayerTwo) {
-      var player2 = new Player(snapshot.child("/player 2/name").val());
+      player2 = new Player(snapshot.child("/player 2/name").val());
       player2.wins = snapshot.child("/player 2/wins").val();
       player2.losses = snapshot.child("/player 2/losses").val();
       playerStats(player2, "#player-two-stats");
@@ -276,6 +275,20 @@ $(document).ready(function () {
    console.log("Error: " + error.code);
  });
 
+  var writeWinnerLoser = function(snapshot, winner, looser) {
+    var pWinner = snapshot.child("/" + winner + "/wins").val();
+    pWinner++;
+    database.ref("/players").child("/" + winner + "/").update({
+      wins :  pWinner
+    });
+
+    var pLooser = snapshot.child("/" + looser + "/losses").val();
+    pLooser++;
+    database.ref("/players").child("/" + looser + "/").update({
+      losses :  pLooser
+    });
+  }
+
   var compareChoices = function(snapshot) {
     var hasP1Choice = snapshot.hasChild("/player 1/choice");
     var hasP2Choice = snapshot.hasChild("/player 2/choice");
@@ -292,77 +305,50 @@ $(document).ready(function () {
 
     if (p1Choice && p2Choice) {
       if ((p1Choice === "rock" && p2Choice === "scissors") || (p1Choice === "scissors" && p2Choice === "paper") || (p1Choice === "paper" && p2Choice === "rock")) {
-        var p1Wins = snapshot.child("/player 1/wins").val();
-        p1Wins++;
-        database.ref("/players").child("/player 1/").update({
-          wins :  p1Wins
-        });
 
-        var p2Losses = snapshot.child("/player 2/losses").val();
-        p2Losses++;
-        database.ref("/players").child("/player 2/").update({
-          losses :  p2Losses
-        });
+        writeWinnerLoser(snapshot, "player 1", "player 2");
 
         database.ref("/players").update({
           winner : snapshot.child("/player 1/name").val()
         })
 
       } else if ((p1Choice === "rock" && p2Choice === "paper") || (p1Choice === "scissors" && p2Choice === "rock") || (p1Choice === "paper" && p2Choice === "scissors")) {
-        var p2Wins = snapshot.child("/player 2/wins").val();
-        p2Wins++;
-        database.ref("/players").child("/player 2/").update({
-          wins :  p2Wins
-        });
 
-        var p1Losses = snapshot.child("/player 1/losses").val();
-        p1Losses++;
-        database.ref("/players").child("/player 1/").update({
-          losses :  p1Losses
-        });
+        writeWinnerLoser(snapshot, "player 2", "player 1");
 
         database.ref("/players").update({
           winner : snapshot.child("/player 2/name").val()
         })
-
       }
-
     }
   }  
+
+  // Replace the choices with big choice
+  var showBigChoice = function(playerOne, img) {
+    if (playerOne) {
+      $("#player-one").empty();
+      $(img).clone().addClass("big-choice float-right").appendTo("#player-one");
+    } else {
+      $("#player-two").empty();
+      $(img).clone().addClass("big-choice float-left").appendTo("#player-two");
+    }
+  }
 
   $(".choices").delegate("img", "click", function() {
     var choice = $(this).attr("data-choice");
     if (choice === "rock") { 
       writePlayerChoice(pData, "rock");
-      if (p1) {
-        $("#player-one").empty();
-        $(this).clone().addClass("big-choice float-right").appendTo("#player-one");
-      } else {
-        $("#player-two").empty();
-        $(this).clone().addClass("big-choice float-left").appendTo("#player-two");
-      }
+      showBigChoice(p1, this);
       database.ref("/players").once("value", compareChoices);
     }
     if (choice === "paper") { 
       writePlayerChoice(pData, "paper");
-      if (p1) {
-        $("#player-one").empty();
-        $(this).clone().addClass("big-choice float-right").appendTo("#player-one");
-      } else {
-        $("#player-two").empty();
-        $(this).clone().addClass("big-choice float-left").appendTo("#player-two");
-      }
+      showBigChoice(p1, this);
       database.ref("/players").once("value", compareChoices);
     }
     if (choice === "scissors") { 
       writePlayerChoice(pData, "scissors");
-      if (p1) {
-        $("#player-one").empty();
-        $(this).clone().addClass("big-choice float-right").appendTo("#player-one");
-      } else {
-        $("#player-two").empty();
-        $(this).clone().addClass("big-choice float-left").appendTo("#player-two");
-      }
+      showBigChoice(p1, this);
       database.ref("/players").once("value", compareChoices);
     }
   });
@@ -380,12 +366,13 @@ $(document).ready(function () {
     $("#message-input").val("");
   });
 
+  // add message into chat window
   var chatRef = database.ref("/chat");
   chatRef.on("child_added", function(snapshot) {
-    console.log(snapshot.key);
     $("#chat-window").append(snapshot.key + ": " + snapshot.val() + "<br>");
     chatRef.remove();
-  });
-
+  }, function (error) {
+   console.log("Error: " + error.code);
+ });
 
 });

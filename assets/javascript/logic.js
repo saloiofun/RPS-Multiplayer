@@ -25,7 +25,7 @@ $(document).ready(function () {
   var pData;
   var player;
 
-  // create "logo"
+  // Create "logo"
   var createHeader = function(element) {
     var choices = ['rock', 'paper', 'scissors'];
     $(element).empty();
@@ -44,7 +44,7 @@ $(document).ready(function () {
     }    
   }
 
-  // Create form for name input
+  // Create HTML form for name input
   var createNameForm = function() {
     $("#name-header").empty();
 
@@ -63,7 +63,7 @@ $(document).ready(function () {
     $("#name-header").append(form);
   }
 
-  // create the choices images
+  // Create rock, paper, scissors buttons/images
   var createChoices = function(element) {
     var choices = ['rock', 'paper', 'scissors'];
     $(element).empty();
@@ -82,7 +82,7 @@ $(document).ready(function () {
     }    
   }
   
-  // Write player's information to Database
+  // Write player's information into Database
   var writePlayerData = function(player) {
   	database.ref(pData).set({
   		name: player.name,
@@ -103,14 +103,14 @@ $(document).ready(function () {
     });
   }
 
-  // Write to player's choice to Database 
+  // Write player's choice to Database 
   var writePlayerChoice = function(player, choice) {
     database.ref(player).update({
       choice: choice
     });
   }
 
-  // Remove player's choice and winner node
+  // Remove player's choice and winner's node
   var removePlayersChoice = function() {
     database.ref("/players/player 1/choice").remove();
     database.ref("/players/player 2/choice").remove();
@@ -138,7 +138,7 @@ $(document).ready(function () {
     });
   }
 
-  // Trigger when user submit name
+  // Trigger when user submits name
   $("#name-header").delegate("#name-submit", "click", function (event) {
     event.preventDefault();
 
@@ -172,7 +172,7 @@ $(document).ready(function () {
     }
   });
 
-  // Update's website when any data in players folder is modified 
+  // Update website when any data in players folder is modified 
   database.ref("/players").on("value", function(snapshot) {
     var hasPlayerOne = snapshot.child("/player 1").exists();
     var hasPlayerTwo = snapshot.child("/player 2").exists();
@@ -194,6 +194,7 @@ $(document).ready(function () {
       p2Choice = snapshot.child("/player 2/choice").val();
     }
 
+    // display player 1 stats
     if (hasPlayerOne) {
       player1 = new Player(snapshot.child("/player 1/name").val());
       player1.wins = snapshot.child("/player 1/wins").val();
@@ -203,6 +204,7 @@ $(document).ready(function () {
       $("#player-one-stats").html("<p>Wait for player 1</p>");
     }    
 
+    // display player 2 stats
     if (hasPlayerTwo) {
       player2 = new Player(snapshot.child("/player 2/name").val());
       player2.wins = snapshot.child("/player 2/wins").val();
@@ -212,6 +214,7 @@ $(document).ready(function () {
       $("#player-two-stats").html("<p>Wait for player 2</p>");
     }
 
+    // Message to players and visitors
     if (hasPlayerOne && hasPlayerTwo) {
       if(!player) {
         $("#welcome-player").html("<h2>Game is On! Please wait for an available spot.</h2>");
@@ -233,6 +236,7 @@ $(document).ready(function () {
       }
     }
 
+    // Display both players choice and result
     if (hasP1Choice && hasP2Choice){
       var p1Image = $("<img class='big-choice float-right img-fluid' src='assets/images/" + p1Choice + ".png' alt='" + p1Choice + "'>");
       var p2Image = $("<img class='big-choice float-left img-fluid' src='assets/images/" + p2Choice + ".png' alt='" + p2Choice + "'>");
@@ -250,6 +254,7 @@ $(document).ready(function () {
       setTimeout(removePlayersChoice, 3500);
     }
 
+    // Message to players and create choices for seperate players
     if (hasPlayerOne && hasPlayerTwo) {
       $("#name-header").empty();
       if (p1) {
@@ -275,6 +280,7 @@ $(document).ready(function () {
    console.log("Error: " + error.code);
  });
 
+  // Update the number of wins and losses in the database
   var writeWinnerLoser = function(snapshot, winner, looser) {
     var pWinner = snapshot.child("/" + winner + "/wins").val();
     pWinner++;
@@ -289,6 +295,7 @@ $(document).ready(function () {
     });
   }
 
+  // Logic for compare players' choice
   var compareChoices = function(snapshot) {
     var hasP1Choice = snapshot.hasChild("/player 1/choice");
     var hasP2Choice = snapshot.hasChild("/player 2/choice");
@@ -323,7 +330,7 @@ $(document).ready(function () {
     }
   }  
 
-  // Replace the choices with big choice
+  // Replace choices with big image/choice
   var showBigChoice = function(playerOne, img) {
     if (playerOne) {
       $("#player-one").empty();
@@ -353,6 +360,7 @@ $(document).ready(function () {
     }
   });
 
+  // Trigger when user submits message
   $("#message-submit").on("click", function(event) {
     event.preventDefault();
     var message = $("#message-input").val().trim();
@@ -366,7 +374,7 @@ $(document).ready(function () {
     $("#message-input").val("");
   });
 
-  // add message into chat window
+  // Add message into chat window
   var chatRef = database.ref("/chat");
   chatRef.on("child_added", function(snapshot) {
     $("#chat-window").append(snapshot.key + ": " + snapshot.val() + "<br>");

@@ -370,6 +370,7 @@ $(document).ready(function () {
   var chatRef = database.ref("/chat");
   chatRef.on("child_added", function(snapshot) {
     $("#chat-window").append(snapshot.key + ": " + snapshot.val() + "<br>");
+    $("#chat-window").scrollTop($("#chat-window")[0].scrollHeight);
     chatRef.remove();
   }, function (error) {
    console.log("Error: " + error.code);

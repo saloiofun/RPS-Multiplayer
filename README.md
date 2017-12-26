@@ -19,3 +19,12 @@ Link: https://saloiofun.github.io/RPS-Multiplayer/
 * Paper wraps Rock
 * Scissors cuts Paper
 * Rock blunts Scissors
+
+## Tools used
+
+* HTML 5
+* CSS
+* JavaScript
+* Jquery
+* Bootstrap 4
+* Firebase
